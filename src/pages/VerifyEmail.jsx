@@ -30,6 +30,7 @@ function VerifyEmail() {
       email,
       password,
       confirmPassword,
+      contactNumber,
     } = signupData;
 
     dispatch(
@@ -40,6 +41,7 @@ function VerifyEmail() {
         email,
         password,
         confirmPassword,
+        contactNumber,
         otp,
         navigate
       )

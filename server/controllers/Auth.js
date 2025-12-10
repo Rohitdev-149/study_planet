@@ -13,7 +13,11 @@ exports.sendOTP = async (req, res) => {
   try {
     // fetch email from request body
     const { email } = req.body;
+    console.log("sendOTP endpoint hit. Request body:", req.body);
+    console.log("Email received:", email);
+
     if (!email) {
+      console.log("Email missing in request body");
       return res.status(400).json({
         success: false,
         message: "Email is required to send OTP.",
@@ -21,7 +25,13 @@ exports.sendOTP = async (req, res) => {
     }
     // check if user exists
     const existingUser = await User.findOne({ email });
+    console.log(
+      "Existing user check result:",
+      existingUser ? "User exists" : "No user found"
+    );
+
     if (existingUser) {
+      console.log("User already registered with email:", email);
       return res.status(400).json({
         success: false,
         message: "User already registered",
@@ -88,6 +98,18 @@ exports.signUp = async (req, res) => {
       contactNumber,
       otp,
     } = req.body;
+//...........................//
+    console.log("=== SIGNUP REQUEST DEBUG ===");
+    console.log("Full request body:", req.body);
+    console.log("firstName:", firstName);
+    console.log("lastName:", lastName);
+    console.log("email:", email);
+    console.log("accountType:", accountType);
+    console.log("password:", password ? "***" : "MISSING");
+    console.log("confirmPassword:", confirmPassword ? "***" : "MISSING");
+    console.log("contactNumber:", contactNumber);
+    console.log("otp:", otp);
+
     // validate data
     if (
       !firstName ||
@@ -99,6 +121,7 @@ exports.signUp = async (req, res) => {
       !contactNumber ||
       !otp
     ) {
+      console.log("Validation failed - Missing fields");
       return res.status(400).json({
         success: false,
         message: "All fields are required",
