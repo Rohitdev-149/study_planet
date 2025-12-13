@@ -4,12 +4,10 @@ import { setLoading, setUser } from "../../slices/profileSlice";
 import { apiConnector } from "../apiconnector";
 import { profileEndpoints } from "../apis";
 import { logout } from "./authAPI";
+import { fetchInstructorCourses } from "./courseDetailsAPI";
 
-const {
-  GET_USER_DETAILS_API,
-  GET_USER_ENROLLED_COURSES_API,
-  GET_INSTRUCTOR_DATA_API,
-} = profileEndpoints;
+const { GET_USER_DETAILS_API, GET_USER_ENROLLED_COURSES_API } =
+  profileEndpoints;
 
 export function getUserDetails(token, navigate) {
   return async (dispatch) => {
@@ -68,8 +66,6 @@ export async function getUserEnrolledCourses(token) {
   toast.dismiss(toastId);
   return result;
 }
-
-import { fetchInstructorCourses } from "./courseDetailsAPI";
 
 export async function getInstructorData(token, userId) {
   const toastId = toast.loading("Loading...");
