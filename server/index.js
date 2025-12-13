@@ -16,6 +16,7 @@ dotenv.config();
 const fileUpload = require("express-fileupload");
 
 const PORT = process.env.PORT || 4000;
+const HOST = process.env.HOST || "0.0.0.0";
 // database connection
 database.connect();
 
@@ -90,6 +91,14 @@ app.get("/", (req, res) => {
   res.send("Welcome to the CodeHelp Backend Server");
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const server = app.listen(PORT, HOST, () => {
+  const address = server.address();
+  console.log(`Server is running on ${address.address}:${address.port}`);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught Exception:", err);
+});
+process.on("unhandledRejection", (reason, promise) => {
+  console.error("Unhandled Rejection at:", promise, "reason:", reason);
 });

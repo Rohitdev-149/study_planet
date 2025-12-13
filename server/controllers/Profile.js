@@ -7,8 +7,15 @@ exports.updateProfile = async (req, res) => {
   try {
     // fetch data from request body
     const { dateOfBirth = "", about = "", contactNumber, gender } = req.body;
+    console.log("updateProfile -> req.body:", req.body);
+    console.log("updateProfile -> req.user:", req.user);
     // get user id from req user
-    const userId = req.user.id;
+    const userId = req.user?.id;
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "Authentication failed" });
+    }
     // validation
     if (!contactNumber || !gender) {
       return res.status(400).json({
@@ -16,20 +23,69 @@ exports.updateProfile = async (req, res) => {
         message: "Contact number and gender are required",
       });
     }
-    // find profile
+    // find user & profile
     const userDetails = await User.findById(userId);
-    const profileId = userDetails.additionalDetails;
-    const profileDetails = await Profile.findById(profileId);
+    console.log("updateProfile -> userDetails:", userDetails);
+    if (!userDetails) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+    let profileId = userDetails.additionalDetails;
+    console.log("updateProfile -> profileId:", profileId);
+    if (!profileId) {
+      console.log("updateProfile -> no profile found; creating a new profile");
+      const newProfile = await Profile.create({
+        gender: null,
+        dateOfBirth: null,
+        about: null,
+        contactNumber: null,
+      });
+      profileId = newProfile._id;
+      userDetails.additionalDetails = profileId;
+      await userDetails.save();
+      console.log("updateProfile -> created newProfileId:", profileId);
+    }
+    let profileDetails = await Profile.findById(profileId);
+    console.log(
+      "updateProfile -> profileDetails after DB fetch:",
+      profileDetails
+    );
+    if (!profileDetails) {
+      console.log(
+        "updateProfile -> profileId found but profileDetails missing; creating new profile"
+      );
+      const newProfile = await Profile.create({
+        gender: null,
+        dateOfBirth: null,
+        about: null,
+        contactNumber: null,
+      });
+      profileId = newProfile._id;
+      userDetails.additionalDetails = profileId;
+      await userDetails.save();
+      profileDetails = newProfile;
+      console.log(
+        "updateProfile -> Created new profile details:",
+        profileDetails
+      );
+    }
+    console.log("updateProfile -> profileDetails:", profileDetails);
     // update profile
     profileDetails.dateOfBirth = dateOfBirth;
     profileDetails.about = about;
     profileDetails.contactNumber = contactNumber;
     profileDetails.gender = gender;
     await profileDetails.save();
+
+    // return the updated user object so frontend can sync profile state
+    const updatedUserDetails = await User.findById(userId).populate(
+      "additionalDetails"
+    );
     return res.status(200).json({
       success: true,
       message: "Profile updated successfully",
-      data: profileDetails,
+      updatedUserDetails: updatedUserDetails,
     });
   } catch (error) {
     console.log(error);

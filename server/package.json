@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "migrate:create-profiles": "node migrations/create-profiles-for-existing-users.js"
   },
   "keywords": [],
   "author": "",

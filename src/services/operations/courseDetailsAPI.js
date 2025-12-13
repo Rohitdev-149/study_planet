@@ -1,6 +1,5 @@
 import { toast } from "react-hot-toast";
 
-import { updateCompletedLectures } from "../../slices/viewCourseSlice";
 // import { setLoading } from "../../slices/profileSlice";
 import { apiConnector } from "../apiconnector";
 import { courseEndpoints } from "../apis";
@@ -17,7 +16,6 @@ const {
   UPDATE_SUBSECTION_API,
   DELETE_SECTION_API,
   DELETE_SUBSECTION_API,
-  GET_ALL_INSTRUCTOR_COURSES_API,
   DELETE_COURSE_API,
   GET_FULL_COURSE_DETAILS_AUTHENTICATED,
   CREATE_RATING_API,
