@@ -18,6 +18,7 @@ exports.connect = () => {
     .catch((error) => {
       console.error("DB Connection Unsuccessful");
       console.error(error);
-      process.exit(1);
+      // Do not hard-crash the server process in development.
+      // This allows the server to stay up and handle client connections even if DB lookup fails.
     });
 };
